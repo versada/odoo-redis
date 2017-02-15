@@ -84,17 +84,15 @@ if use_redis:
                         db=0
                         )
 
+    # Originally this is a lazy_property. From now on it's a simple attribute
+    # XXX: check if it does not have any side effects
+    def session_store():
+        return RedisSessionStore(
+                redis_instance,
+                redis_salt,
+                session_class=OpenERPSession)
 
-    class Root(OdooRoot):
-        @lazy_property
-        def session_store(self):
-            return RedisSessionStore(
-                    redis_instance,
-                    redis_salt,
-                    session_class=OpenERPSession)
-
-
-    http.root = Root()
+    http.root.session_store = session_store()
 
     # we do nothing for session_gc
     def redis_session_gc(session_store):
