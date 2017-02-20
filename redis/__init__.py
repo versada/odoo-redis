@@ -4,7 +4,7 @@ from openerp.tools import config as openerp_config
 from openerp import http
 from openerp.http import Root as OdooRoot
 from openerp.http import OpenERPSession
-from openerp.http import session_gc
+from openerp.service import wsgi_server
 
 from werkzeug.contrib.sessions import SessionStore
 
@@ -84,7 +84,6 @@ if use_redis:
                         db=0
                         )
 
-
     class Root(OdooRoot):
         @lazy_property
         def session_store(self):
@@ -93,8 +92,10 @@ if use_redis:
                     redis_salt,
                     session_class=OpenERPSession)
 
-
-    http.root = Root()
+    for index, handler in enumerate(wsgi_server.module_handlers):
+        if isinstance(handler, http.Root):
+            wsgi_server.module_handlers[index] = Root()
+            break
 
     # we do nothing for session_gc
     def redis_session_gc(session_store):
