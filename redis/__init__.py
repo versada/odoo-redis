@@ -74,6 +74,7 @@ if use_redis:
                     'redis_salt',
                     '-RMsSz~]3}4[Bu3_aEFx.5[57O^vH?`{X4R)Y3<Grvq6E:L?6#aoA@|/^^ky@%TI'
                     )
+    redis_password = openerp_config.get('redis_password', None)
 
     logger.debug("Connecting Redis at {}:{}".format(redis_host, redis_port))
 
@@ -81,7 +82,8 @@ if use_redis:
     redis_instance = redis.StrictRedis(
                         host=redis_host,
                         port=redis_port,
-                        db=0
+                        db=0,
+                        password=redis_password,
                         )
 
     class Root(OdooRoot):
